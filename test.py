@@ -1,30 +1,26 @@
+from services.prompt import get_evaluation_prompt
+from langchain_core.output_parsers import PydanticOutputParser
 from models.pydantic_models import EvaluationResponse
 
 
-response = EvaluationResponse(
-    statement="Climate change is caused by human activity",
-    topic="Climate change is a global crisis",
-    factual_accuracy=85.0,
-    relevance_score="90.0",
-    explanation="Good ...",
-    confidence=0.8
-)
-print(response.model_dump_json())
-print()
-print()
-print()
-print()
+parser = PydanticOutputParser(pydantic_object=EvaluationResponse)
 
+prompt = get_evaluation_prompt()
 
+ip = {
+    "topic": "Climate change is a global crisis",
+    "statement": "Climate change is caused by only human activity",
+    "user_id": 1,
+    "history": [],
+    "format_instructions": parser.get_format_instructions()
+}
 
-try:
-    invalid = EvaluationResponse(
-        statement="Climate change is caused by human activity",
-        topic="Clioi",
-        factual_accuracy=15.0, 
-        relevance_score="900.0",
-        explanation="ljk",
-        confidence=0.98
-    )
-except Exception as e:
-    print(f"Validation error: {e}")
+prompt_value = prompt.invoke(ip)
+print("Prompt messages:")
+print()
+print(prompt_value)
+print("")
+print("_____________________________________")
+print("")
+for msg in prompt_value.messages:
+    print(f"- {msg.__class__.__name__}: {msg.content}")
