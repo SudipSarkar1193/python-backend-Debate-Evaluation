@@ -23,7 +23,7 @@ class DebateEvaluator:
         
         self.chain = self.prompt | self.model | self.parser
 
-    def evaluate_statement(self, topic: str, statement: str, user_id: int, memory: 'ConversationBufferWindowMemory',session_store = None,session_id =None) -> EvaluationResponse:
+    def evaluate_statement(self, topic: str, statement: str, user_id: int, memory: 'ConversationBufferWindowMemory',in_favour_string: str = None ,session_store = None,session_id : str =None) -> EvaluationResponse:
         try:
             # Invoke chain with memory's history
             response = self.chain.invoke({
@@ -31,14 +31,16 @@ class DebateEvaluator:
                 "statement": statement,
                 "user_id": user_id,
                 "history": memory.load_memory_variables({})["history"],
-                "format_instructions": self.parser.get_format_instructions()
+                "format_instructions": self.parser.get_format_instructions(),
+                "in_favour_string": in_favour_string
             })
 
             # Save statement and response to memory
             memory.save_context(
-                inputs={"input": f"User {user_id}: {statement}"},
+                inputs={"input": f"User {user_id}: {statement} (Stance: {in_favour_string})"},
                 outputs={"output": response.json()}
             )
+            
             #debug :
             logger.debug("*********************************************")
             MemoryManager.print_current_memory(session_store,session_id)
