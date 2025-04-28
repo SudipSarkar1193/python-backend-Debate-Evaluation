@@ -22,7 +22,29 @@ class MemoryManager:
         return session_id
 
     def get_memory(self, session_id: str):
-        return "Memory is not implemented yet"
+        if session_id not in self.session_store:
+            raise ValueError("Invalid session_id")
+        return self.session_store[session_id]["memory"]
 
     def get_topic(self, session_id: str) -> str:
-        return "dummy-topic"
+        if session_id not in self.session_store:
+            raise ValueError("Invalid session_id")
+        return self.session_store[session_id]["topic"]
+    
+    def print_current_memory(self, session_id: str):
+        """Prints the current conversation memory for a session."""
+        if session_id not in self.session_store:
+            raise ValueError("Invalid session_id")
+        
+        memory = self.session_store[session_id]["memory"]
+        history = memory.buffer
+        
+        if not history:
+            print("No conversation history yet.")
+            return
+        
+        print(f"Conversation history for session {session_id}:")
+        for message in history:
+            role = getattr(message, "type", "unknown")
+            content = getattr(message, "content", "")
+            print(f"[{role}] {content}")

@@ -39,16 +39,7 @@ def process_debate_turns(session_memory, debate_turns: list[tuple[str, str]]):
         full_statement = f"[{speaker}] {statement}"
         session_memory.chat_memory.add_user_message(full_statement)
 
-        
 
-def print_memory_buffer(session_memory):
-    """Print the full memory buffer."""
-    print("\n\n[*] Full Debate Memory Buffer:")
-    for msg in session_memory.buffer:
-        if isinstance(msg, HumanMessage):
-            print(f"User: {msg.content}")
-        elif isinstance(msg, AIMessage):
-            print(f"AI: {msg.content}")
 
 
 memory_manager = MemoryManager(k=3)  
@@ -69,7 +60,9 @@ debate_turns = [
 ]
 
 process_debate_turns(memory, debate_turns)
-print_memory_buffer(memory)
+
+memory_manager.print_current_memory(session_id)
+
 
 
 
