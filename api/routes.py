@@ -49,10 +49,10 @@ def evaluate_statement():
         print("memory",memory)
 
         # Evaluate statement
-        evaluation = evaluator.evaluate_statement(topic, statement, user_id, memory)
+        evaluation = evaluator.evaluate_statement(topic, statement, user_id, memory,memory_manager.session_store,session_id)
 
         return jsonify({
-            "evaluation": evaluation
+            "evaluation": evaluation.model_dump()
         }), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500

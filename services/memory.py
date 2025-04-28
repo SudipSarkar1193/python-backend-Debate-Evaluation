@@ -31,18 +31,23 @@ class MemoryManager:
             raise ValueError("Invalid session_id")
         return self.session_store[session_id]["topic"]
     
-    def print_current_memory(self, session_id: str):
-        """Prints the current conversation memory for a session."""
-        if session_id not in self.session_store:
+    @staticmethod
+    def print_current_memory(session_store: Dict[str, Dict], session_id: str):
+        """Prints the current conversation memory for a given session."""
+        if session_id == None or session_store == None :
+            print("No session_id or No session_store given")
+            return ;
+        
+        if session_id not in session_store:
             raise ValueError("Invalid session_id")
         
-        memory = self.session_store[session_id]["memory"]
+        memory = session_store[session_id]["memory"]
         history = memory.buffer
         
         if not history:
             print("No conversation history yet.")
             return
-        
+            
         print(f"Conversation history for session {session_id}:")
         for message in history:
             role = getattr(message, "type", "unknown")
